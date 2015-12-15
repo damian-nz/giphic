@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Http\Response;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -13,4 +13,8 @@
 
 $app->get('/', function () use ($app) {
     return $app->welcome();
+});
+
+$app->get('/slack', function () use ($app) {
+    return (new Response('Hello Slack', 200));
 });
