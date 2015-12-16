@@ -23,5 +23,5 @@ $app->get('/slack', function () use ($app) {
 });
 
 $app->post('/slack', function (Request $request) use ($app) {
-    return (new Response('You sent me: '.json_encode($request->all()), 200));
+    return (new Response(json_encode(file_get_contents('http://api.giphy.com/v1/gifs/search?q='.$request->get('text').'&api_key=dc6zaTOxFJmzC')), 200));
 });
