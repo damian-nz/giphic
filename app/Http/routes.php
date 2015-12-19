@@ -1,6 +1,6 @@
 <?php
 
-use \Httpful\Request;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 /*
@@ -24,7 +24,7 @@ $app->get('/slack', function () use ($app) {
 
 $app->post('/slack', function (Request $request) use ($app) {
     $giphyURL = 'http://api.giphy.com/v1/gifs/search?q='.$request->get('text').'&api_key=dc6zaTOxFJmzC';
-    $giphyResponse = $request->get($giphyURL)
+    $giphyResponse = \Httpful\Request::get($giphyURL)
     ->expectsJson()
     ->send();
 
