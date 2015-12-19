@@ -36,17 +36,17 @@ $app->post('/slack', function (Request $request) use ($app) {
         "attachments" => [
                 [
                     "title" => 'Option One',
-                    "title_link": "https://api.slack.com/",
+                    "title_link" => "https://api.slack.com/",
                     "image_url" => $giphyResponse[0]->body->data[0]->images->fixed_height_small->url
                 ],
                 [
                     "title" => 'Option Two',
-                    "title_link": "https://api.slack.com/",
+                    "title_link" => "https://api.slack.com/",
                     "image_url" => $giphyResponse[0]->body->data[1]->images->fixed_height_small->url
                 ],
                 [
                     "title" => 'Option Three',
-                    "title_link": "https://api.slack.com/",
+                    "title_link" => "https://api.slack.com/",
                     "image_url" => $giphyResponse[0]->body->data[2]->images->fixed_height_small->url
                 ],
         ]
