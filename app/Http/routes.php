@@ -32,26 +32,23 @@ $app->post('/slack', function (Request $request) use ($app) {
     return response()->json([
         "response_type" => 'ephemeral',
         "unfurl_media"=> true,
-        "text" => "<".$giphyResponse[0]->body->data[0]->url.">\n <".$giphyResponse[0]->body->data[1]->embed_url.">\n <".$giphyResponse[0]->body->data[2]->url."> ",
+        "text" => "Click the title of one to post it",
         "attachments" => [
                 [
-                    "text" => 'Option One',
+                    "title" => 'Option One',
+                    "title_link": "https://api.slack.com/",
                     "image_url" => $giphyResponse[0]->body->data[0]->images->fixed_height_small->url
                 ],
                 [
-                    "title" => "Option Two",
-                    "image_url" => $giphyResponse[0]->body->data[1]->images->fixed_height_small->url,
-                    "color" => "#2BD9FE",
-                    "unfurl_media"=> true,
-                    "unfurl_links"=> true,
+                    "title" => 'Option Two',
+                    "title_link": "https://api.slack.com/",
+                    "image_url" => $giphyResponse[0]->body->data[1]->images->fixed_height_small->url
                 ],
                 [
-                    "title" => "Option Three - small static image",
-                    "image_url" => "http://icons.iconarchive.com/icons/iconka/landmarks/128/kiwi-icon.png",
-                    "color" => "#2BD9FE",
-                    "unfurl_media"=> true,
-                    "unfurl_links"=> true,
-                ]
+                    "title" => 'Option Three',
+                    "title_link": "https://api.slack.com/",
+                    "image_url" => $giphyResponse[0]->body->data[2]->images->fixed_height_small->url
+                ],
         ]
     ]);
 });
