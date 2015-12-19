@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use \Httpful\Request;
 use Illuminate\Http\Response;
 
 /*
@@ -23,40 +23,14 @@ $app->get('/slack', function () use ($app) {
 });
 
 $app->post('/slack', function (Request $request) use ($app) {
-    $giphy = file_get_contents('http://api.giphy.com/v1/gifs/search?q='.$request->get('text').'&api_key=dc6zaTOxFJmzC');
+    $giphyURL = 'http://api.giphy.com/v1/gifs/search?q='.$request->get('text').'&api_key=dc6zaTOxFJmzC';
+    $giphyResponse = $request->get($giphyURL)
+    ->expectsJson()
+    ->send();
 
-    return (new Response(
-        {
-            "attachments": [
-                {
-                    "fallback": "Required plain-text summary of the attachment.",
-
-                    "color": "#36a64f",
-
-                    "pretext": "Optional text that appears above the attachment block",
-
-                    "author_name": "Bobby Tables",
-                    "author_link": "http://flickr.com/bobby/",
-                    "author_icon": "http://flickr.com/icons/bobby.jpg",
-
-                    "title": "Slack API Documentation",
-                    "title_link": "https://api.slack.com/",
-
-                    "text": "Optional text that appears within the attachment",
-
-                    "fields": [
-                        {
-                            "title": "Priority",
-                            "value": "High",
-                            "short": false
-                        }
-                    ],
-
-                    "image_url": $giphy->data->url,
-                    "thumb_url": $giphy->data->url
-                }
-            ]
-        }
-    , 200));
-
+    return response()->json([
+        "response_type" => 'ephemeral',
+        "unfurl_media"=> true,
+        "text" => "<".$giphyResponse->body->data[0]->url.">"
+    ]);
 });
