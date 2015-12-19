@@ -23,7 +23,7 @@ $app->get('/slack', function () use ($app) {
 });
 
 $app->post('/slack', function (Request $request) use ($app) {
-    $giphyURL = 'http://api.giphy.com/v1/gifs/search?q='.$request->get('text').'&api_key=dc6zaTOxFJmzC';
+    $giphyURL = 'http://api.giphy.com/v1/gifs/search?q='.urlencode($request->get('text')).'&api_key=dc6zaTOxFJmzC';
 
     $giphyResponse[] = \Httpful\Request::get($giphyURL)
     ->expectsJson()
@@ -32,6 +32,26 @@ $app->post('/slack', function (Request $request) use ($app) {
     return response()->json([
         "response_type" => 'ephemeral',
         "unfurl_media"=> true,
-        "text" => "<".$giphyResponse[0]->body->data[0]->url.">\n <".$giphyResponse[0]->body->data[1]->url.">\n <".$giphyResponse[0]->body->data[2]->url."> "
+        "text" => "<".$giphyResponse[0]->body->data[0]->url.">\n <".$giphyResponse[0]->body->data[1]->embed_url.">\n <".$giphyResponse[0]->body->data[2]->url."> ",
+        "attachments" => [
+                [
+                    "text" => 'Option One',
+                    "image_url" => $giphyResponse[0]->body->data[0]->images->fixed_height_small->url
+                ],
+                [
+                    "title" => "Option Two",
+                    "image_url" => $giphyResponse[0]->body->data[1]->images->fixed_height_small->url,
+                    "color" => "#2BD9FE",
+                    "unfurl_media"=> true,
+                    "unfurl_links"=> true,
+                ],
+                [
+                    "title" => "Option Three - small static image",
+                    "image_url" => "http://icons.iconarchive.com/icons/iconka/landmarks/128/kiwi-icon.png",
+                    "color" => "#2BD9FE",
+                    "unfurl_media"=> true,
+                    "unfurl_links"=> true,
+                ]
+        ]
     ]);
 });
