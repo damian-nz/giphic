@@ -24,13 +24,24 @@ $app->get('/slack', function () use ($app) {
 
 $app->post('/slack', function (Request $request) use ($app) {
     $giphyURL = 'http://api.giphy.com/v1/gifs/search?q='.$request->get('text').'&api_key=dc6zaTOxFJmzC';
-    $giphyResponse = \Httpful\Request::get($giphyURL)
+
+    $giphyResponse = [];
+
+    $giphyResponse[] = \Httpful\Request::get($giphyURL)
+    ->expectsJson()
+    ->send();
+
+    $giphyResponse[] = \Httpful\Request::get($giphyURL)
+    ->expectsJson()
+    ->send();
+
+    $giphyResponse[] = \Httpful\Request::get($giphyURL)
     ->expectsJson()
     ->send();
 
     return response()->json([
         "response_type" => 'ephemeral',
         "unfurl_media"=> true,
-        "text" => "<".$giphyResponse->body->data[0]->url.">"
+        "text" => "<".$giphyResponse[0]->body->data[0]->url.">\n <".$giphyResponse[1]->body->data[0]->url.">\n <".$giphyResponse[2]->body->data[0]->url."> "
     ]);
 });
