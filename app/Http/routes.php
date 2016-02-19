@@ -24,6 +24,7 @@ $app->get('/slack', function () use ($app) {
 
 $app->post('/slack', function (Request $request) use ($app) {
     $giphyURL = 'http://api.giphy.com/v1/gifs/search?q='.urlencode($request->get('text')).'&api_key=dc6zaTOxFJmzC';
+    $giphicURL = 'http://giphic.acropixel.com/post_message?gif=';
 
     $giphyResponse[] = \Httpful\Request::get($giphyURL)
     ->expectsJson()
@@ -36,18 +37,31 @@ $app->post('/slack', function (Request $request) use ($app) {
         "attachments" => [
                 [
                     "title" => 'Option One',
-                    "title_link" => "https://api.slack.com/",
+                    "title_link" => $giphicURL.$giphyResponse[0]->body->data[0]->images->fixed_height_small->url,
                     "image_url" => $giphyResponse[0]->body->data[0]->images->fixed_height_small->url
                 ],
                 [
                     "title" => 'Option Two',
-                    "title_link" => "https://api.slack.com/",
+                    "title_link" => $giphicURL.$giphyResponse[0]->body->data[1]->images->fixed_height_small->url,
                     "image_url" => $giphyResponse[0]->body->data[1]->images->fixed_height_small->url
                 ],
                 [
                     "title" => 'Option Three',
-                    "title_link" => "https://api.slack.com/",
+                    "title_link" => $giphicURL.$giphyResponse[0]->body->data[2]->images->fixed_height_small->url,
                     "image_url" => $giphyResponse[0]->body->data[2]->images->fixed_height_small->url
+                ],
+        ]
+    ]);
+});
+
+$app->get('/post_message', function (\Request $request) use ($app) {
+    $url = $request->get('gif');
+    return response()->json([
+        "response_type" => 'in_channel',
+        "unfurl_media"=> true,
+        "attachments" => [
+                [
+                    "image_url" => $url
                 ],
         ]
     ]);
