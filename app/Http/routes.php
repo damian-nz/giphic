@@ -56,14 +56,15 @@ $app->post('/post_message', function (Request $request) use ($app) {
     // split into number, space, keyword
     preg_match("/(\d+)(\s+)(.+)/", $request->get('text'), $matches);
     $giphyResponse = getGifsByKeyword($matches[3]);
+    $gifPosition = $matches[1] + 1;
 
     return response()->json([
         "response_type" => 'in_channel',
         "unfurl_media"=> true,
         "attachments" => [
                 [
-                    "title" => $giphyResponse->body->data[$matches[1]]->images->fixed_height_small->url,
-                    "image_url" => $giphyResponse->body->data[$matches[1]]->images->fixed_height_small->url
+                    "title" => $giphyResponse->body->data[$gifPosition]->images->fixed_height_small->url,
+                    "image_url" => $giphyResponse->body->data[$gifPosition]->images->fixed_height_small->url
                 ],
         ]
     ]);
