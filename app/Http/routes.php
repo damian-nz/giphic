@@ -51,7 +51,7 @@ $app->post('/slack', function (Request $request) use ($app) {
     ]);
 });
 
-$app->get('/post_message', function (\Request $request) use ($app) {
+$app->post('/post_message', function (Request $request) use ($app) {
 
     // split into number, space, keyword
     preg_match("/(\d+)(\s+)(.+)/", $request->get('text'), $matches);
@@ -62,7 +62,7 @@ $app->get('/post_message', function (\Request $request) use ($app) {
         "unfurl_media"=> true,
         "attachments" => [
                 [
-                    "title" => $giphyResponse->body->data[$matches[1]]->images->fixed_height_small->url
+                    "title" => $giphyResponse->body->data[$matches[1]]->images->fixed_height_small->url,
                     "image_url" => $giphyResponse->body->data[$matches[1]]->images->fixed_height_small->url
                 ],
         ]
