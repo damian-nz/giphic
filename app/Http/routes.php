@@ -24,7 +24,7 @@ $app->get('/slack', function () use ($app) {
 
 $app->post('/slack', function (Request $request) use ($app) {
     // $giphicURL = 'http://giphic.acropixel.com/post_message?gif=';
-    $giphyResponse = $this->getGifsByKeyword($request->get('text'));
+    $giphyResponse = getGifsByKeyword($request->get('text'));
 
     return response()->json([
         "response_type" => 'ephemeral',
@@ -46,6 +46,11 @@ $app->post('/slack', function (Request $request) use ($app) {
                     // "title_link" => $giphicURL.$giphyResponse->body->data[2]->images->fixed_height_small->url,
                     "image_url" => $giphyResponse->body->data[2]->images->fixed_height_small->url
                 ],
+                [
+                    "title" => 'Option Four',
+                    // "title_link" => $giphicURL.$giphyResponse->body->data[2]->images->fixed_height_small->url,
+                    "image_url" => $giphyResponse->body->data[3]->images->fixed_height_small->url
+                ],
         ]
     ]);
 });
@@ -53,15 +58,16 @@ $app->post('/slack', function (Request $request) use ($app) {
 $app->get('/post_message', function (\Request $request) use ($app) {
 
     // split into number, space, keyword
-    preg_match(/(\d+)(\s+)(\.+)/g, $request->get('text'), $matches);
-    $giphyResponse = $this->getGifsByKeyword($matches[2]);
+    preg_match("/(\d+)(\s+)(.+)/", $request->get('text'), $matches);
+    $giphyResponse = getGifsByKeyword($matches[3]);
 
     return response()->json([
         "response_type" => 'in_channel',
         "unfurl_media"=> true,
         "attachments" => [
                 [
-                    "image_url" => $giphyResponse->body->data[$matches[0]]->images->fixed_height_small->url
+                    "title" => $giphyResponse->body->data[$matches[1]]->images->fixed_height_small->url
+                    "image_url" => $giphyResponse->body->data[$matches[1]]->images->fixed_height_small->url
                 ],
         ]
     ]);
@@ -81,7 +87,7 @@ $app->get('/post_message', function (\Request $request) use ($app) {
 //     ]);
 // });
 
-private function getGifsByKeyword($keyword)
+function getGifsByKeyword($keyword)
 {
     $giphyURL = 'http://api.giphy.com/v1/gifs/search?q='.urlencode($keyword).'&api_key=dc6zaTOxFJmzC';
 
