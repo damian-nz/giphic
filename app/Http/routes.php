@@ -56,7 +56,7 @@ $app->post('/post_message', function (Request $request) use ($app) {
     // split into number, space, keyword
     preg_match("/(\d+)(\s+)(.+)/", $request->get('text'), $matches);
     $giphyResponse = getGifsByKeyword($matches[3]);
-    $gifPosition = $matches[1] + 1;
+    $gifPosition = $matches[1] - 1;
 
     return response()->json([
         "response_type" => 'in_channel',
