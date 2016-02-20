@@ -23,12 +23,8 @@ $app->get('/slack', function () use ($app) {
 });
 
 $app->post('/slack', function (Request $request) use ($app) {
-    $giphyURL = 'http://api.giphy.com/v1/gifs/search?q='.urlencode($request->get('text')).'&api_key=dc6zaTOxFJmzC';
-    $giphicURL = 'http://giphic.acropixel.com/post_message?gif=';
-
-    $giphyResponse[] = \Httpful\Request::get($giphyURL)
-    ->expectsJson()
-    ->send();
+    // $giphicURL = 'http://giphic.acropixel.com/post_message?gif=';
+    $giphyResponse = $this->getGifsByKeyword($request->get('text'));
 
     return response()->json([
         "response_type" => 'ephemeral',
@@ -37,32 +33,59 @@ $app->post('/slack', function (Request $request) use ($app) {
         "attachments" => [
                 [
                     "title" => 'Option One',
-                    "title_link" => $giphicURL.$giphyResponse[0]->body->data[0]->images->fixed_height_small->url,
-                    "image_url" => $giphyResponse[0]->body->data[0]->images->fixed_height_small->url
+                    // "title_link" => $giphicURL.$giphyResponse->body->data[0]->images->fixed_height_small->url,
+                    "image_url" => $giphyResponse->body->data[0]->images->fixed_height_small->url
                 ],
                 [
                     "title" => 'Option Two',
-                    "title_link" => $giphicURL.$giphyResponse[0]->body->data[1]->images->fixed_height_small->url,
-                    "image_url" => $giphyResponse[0]->body->data[1]->images->fixed_height_small->url
+                    // "title_link" => $giphicURL.$giphyResponse->body->data[1]->images->fixed_height_small->url,
+                    "image_url" => $giphyResponse->body->data[1]->images->fixed_height_small->url
                 ],
                 [
                     "title" => 'Option Three',
-                    "title_link" => $giphicURL.$giphyResponse[0]->body->data[2]->images->fixed_height_small->url,
-                    "image_url" => $giphyResponse[0]->body->data[2]->images->fixed_height_small->url
+                    // "title_link" => $giphicURL.$giphyResponse->body->data[2]->images->fixed_height_small->url,
+                    "image_url" => $giphyResponse->body->data[2]->images->fixed_height_small->url
                 ],
         ]
     ]);
 });
 
 $app->get('/post_message', function (\Request $request) use ($app) {
-    $url = $request->get('gif');
+
+    // split into number, space, keyword
+    preg_match(/(\d+)(\s+)(\.+)/g, $request->get('text'), $matches);
+    $giphyResponse = $this->getGifsByKeyword($matches[2]);
+
     return response()->json([
         "response_type" => 'in_channel',
         "unfurl_media"=> true,
         "attachments" => [
                 [
-                    "image_url" => $url
+                    "image_url" => $giphyResponse->body->data[$matches[0]]->images->fixed_height_small->url
                 ],
         ]
     ]);
 });
+
+// How I wish I could do it
+// $app->get('/post_message', function (\Request $request) use ($app) {
+//     $url = $request->get('gif');
+//     return response()->json([
+//         "response_type" => 'in_channel',
+//         "unfurl_media"=> true,
+//         "attachments" => [
+//                 [
+//                     "image_url" => $url
+//                 ],
+//         ]
+//     ]);
+// });
+
+private function getGifsByKeyword($keyword)
+{
+    $giphyURL = 'http://api.giphy.com/v1/gifs/search?q='.urlencode($keyword).'&api_key=dc6zaTOxFJmzC';
+
+    return \Httpful\Request::get($giphyURL)
+    ->expectsJson()
+    ->send();
+}
