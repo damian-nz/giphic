@@ -33,22 +33,18 @@ $app->post('/slack', function (Request $request) use ($app) {
         "attachments" => [
                 [
                     "title" => 'Option One',
-                    // "title_link" => $giphicURL.$giphyResponse->body->data[0]->images->fixed_height_small->url,
                     "image_url" => $giphyResponse->body->data[0]->images->fixed_height_small->url
                 ],
                 [
                     "title" => 'Option Two',
-                    // "title_link" => $giphicURL.$giphyResponse->body->data[1]->images->fixed_height_small->url,
                     "image_url" => $giphyResponse->body->data[1]->images->fixed_height_small->url
                 ],
                 [
                     "title" => 'Option Three',
-                    // "title_link" => $giphicURL.$giphyResponse->body->data[2]->images->fixed_height_small->url,
                     "image_url" => $giphyResponse->body->data[2]->images->fixed_height_small->url
                 ],
                 [
                     "title" => 'Option Four',
-                    // "title_link" => $giphicURL.$giphyResponse->body->data[2]->images->fixed_height_small->url,
                     "image_url" => $giphyResponse->body->data[3]->images->fixed_height_small->url
                 ],
         ]
